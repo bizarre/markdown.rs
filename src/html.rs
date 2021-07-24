@@ -131,7 +131,7 @@ fn format_spans(elements: &[Span], link_references: &LinkReferenceMap) -> String
             ),
 
             Video(ref text, ref url) => format!(
-              "<video src=\"{}\">{}</>",
+              "<video src=\"{}\" playsinline controls>{}</>",
               &escape(url, false),
               &escape(text, true)
             ),
