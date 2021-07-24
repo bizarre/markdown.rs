@@ -7,12 +7,15 @@ mod emphasis;
 mod image;
 mod link;
 mod strong;
+mod video;
+
 use self::br::parse_break;
 use self::code::parse_code;
 use self::emphasis::parse_emphasis;
 use self::image::parse_image;
 use self::link::parse_link;
 use self::strong::parse_strong;
+use self::video::parse_video;
 
 pub fn parse_spans(text: &str) -> Vec<Span> {
     let mut tokens = vec![];
@@ -82,6 +85,7 @@ fn parse_span(text: &str) -> Option<(Span, usize)> {
     => parse_emphasis
     => parse_break
     => parse_image
+    => parse_video
     => parse_link
     )
 }
@@ -89,7 +93,7 @@ fn parse_span(text: &str) -> Option<(Span, usize)> {
 #[cfg(test)]
 mod test {
     use parser::span::parse_spans;
-    use parser::Span::{Break, Code, Emphasis, Image, Link, Literal, Strong, Text};
+    use parser::Span::{Break, Code, Emphasis, Image, Link, Literal, Strong, Text, Video};
     use std::str;
 
     #[test]
@@ -202,12 +206,26 @@ mod test {
     }
 
     #[test]
+    fn finds_video() {
+        assert_eq!(
+            parse_spans("this is #[an example](example.com) test"),
+            vec![
+                Text("this is ".to_owned()),
+                Video("an example".to_owned(), "example.com".to_owned()),
+                Text(" test".to_owned())
+            ]
+        );
+    }
+
+    #[test]
     fn finds_everything() {
         assert_eq!(
-            parse_spans("some text ![an image](image.com) _emphasis_ __strong__ `teh codez` [a link](example.com)  "),
+            parse_spans("some text ![an image](image.com) #[a video](video.com) _emphasis_ __strong__ `teh codez` [a link](example.com)  "),
             vec![
             Text("some text ".to_owned()),
             Image("an image".to_owned(), "image.com".to_owned(), None),
+            Text(" ".to_owned()),
+            Video("a video".to_owned(), "video.com".to_owned()),
             Text(" ".to_owned()),
             Emphasis(vec![Text("emphasis".to_owned())]),
             Text(" ".to_owned()),

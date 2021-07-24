@@ -55,6 +55,7 @@ fn gen_span(s: Span) -> String {
         RefLink(_, _, raw) => raw,
         Image(a, b, None) => format!("![{}]({})", a, b),
         Image(a, b, Some(c)) => format!("![{}]({} \"{}\")", a, b, c),
+        Video(a, b) => format!("#[{}]({})", a, b),
         Emphasis(x) => format!("*{}*", generate_from_spans(x)),
         Strong(x) => format!("**{}**", generate_from_spans(x)),
     }

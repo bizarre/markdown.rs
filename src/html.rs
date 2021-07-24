@@ -2,7 +2,7 @@ use parser::Block;
 use parser::Block::{
     Blockquote, CodeBlock, Header, Hr, LinkReference, OrderedList, Paragraph, Raw, UnorderedList,
 };
-use parser::Span::{Break, Code, Emphasis, Image, Link, Literal, RefLink, Strong, Text};
+use parser::Span::{Break, Code, Emphasis, Image, Link, Literal, RefLink, Strong, Text, Video};
 use parser::{ListItem, OrderedListType, Span};
 use regex::Regex;
 use std::collections::HashMap;
@@ -17,7 +17,7 @@ fn slugify(elements: &[Span], no_spaces: bool) -> String {
         let next = match *el {
             Break => "".to_owned(),
             Literal(character) => character.to_string(),
-            Text(ref text) | Image(ref text, _, _) | Code(ref text) => text.trim().to_lowercase(),
+            Text(ref text) | Image(ref text, _, _) | Video(ref text, _) | Code(ref text) => text.trim().to_lowercase(),
             RefLink(ref content, _, _)
             | Link(ref content, _, _)
             | Strong(ref content)
@@ -129,6 +129,13 @@ fn format_spans(elements: &[Span], link_references: &LinkReferenceMap) -> String
                 &escape(url, false),
                 &escape(text, true)
             ),
+
+            Video(ref text, ref url) => format!(
+              "<video src=\"{}\">{}</>",
+              &escape(url, false),
+              &escape(text, true)
+            ),
+
             Image(ref text, ref url, Some(ref title)) => format!(
                 "<img src=\"{}\" title=\"{}\" alt=\"{}\" />",
                 &escape(url, false),

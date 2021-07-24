@@ -70,7 +70,7 @@ pub enum Span {
      **/
     RefLink(Vec<Span>, String, String),
     Image(String, String, Option<String>),
-
+    Video(String, String),
     Emphasis(Vec<Span>),
     Strong(Vec<Span>),
 }
